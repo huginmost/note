@@ -229,4 +229,4 @@ cv::adaptiveThreshold(gray, binary_adaptive, 255, ADAPTIVE_THRESH_GAUSSIAN_C, TH
 
 - 效果：
 
-![image-20241110003024435](D:\code\c-cpp\learn\assets\image-20241110003024435.png)
+![image-20241110003024435](./assets/image-20241110003024435.png)
