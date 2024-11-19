@@ -6,6 +6,7 @@ Mat src = cv::imread("../opencv.jpg", IMREAD_COLOR); // IMREAD_GREYSCALE
 Mat cp = src.copy();
 cv::imwrite("../opencv.jpg", src)
 ```
+
 ### 分离通道
 ```c++
 std::vector<Mat> channels(3);
@@ -16,16 +17,19 @@ cv::imshow("R", channels[2]);
 // merge 合并
 cv::merge(channels[0], channels[1], 0) // 合并BG图
 ```
+
 ### 取灰度图
 ```c++
 cv::cvtColor(this->src, grayImg, COLOR_BGR2GRAY);
 cv::imshow("gray", grayImg);
 ```
+
 ### ROI (取范围图)  
 ```c++
 Mat crop = this->src(Range(10,170), Range(40, 200));
 imshow("crop", crop);
 ```
+
 ### 边界填充
 ![2](screenshot/2.png)
 ![1](screenshot/1.png)
@@ -120,3 +124,52 @@ cv::morphologyEx(img, gradient, open, MORPH_BLACKHAT, kernel);
 ![7](screenshot/7.png)
 ![8](screenshot/8.png)
 ![9](screenshot/9.png)
+
+### schaar && lapkacian 算子
+![10](screenshot/10.png)
+
+
+### threshold
+```c++
+	// 图片灰度二值化
+	void threshold() {
+		Mat gray, binary, binary_adaptive, binary_otsu;
+		cvtColor(src, gray, COLOR_BGR2GRAY);
+
+		// 普通二值化
+		cv::threshold(gray, binary, 10, 255, THRESH_BINARY);
+		// 大津算法（基于图片灰度聚类分析，自定义阈值）
+		cv::threshold(gray, binary_otsu, 0, 255, THRESH_BINARY + THRESH_OTSU);
+		// 图片自适应二值化（划分区块二值化，效果更好） ADAPTIVE_THRESH_GAUSSIAN_C 高斯算法
+		cv::adaptiveThreshold(gray, binary_adaptive, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, 115, 1);
+
+		imshow("gray", gray);
+		imshow("binary", binary);
+		imshow("adaptive", binary_adaptive);
+		imshow("otsu", binary_otsu);
+	}
+
+```
+![13](screenshot/13.png)
+![12](screenshot/12.png)
+
+
+### 图像平滑处理 - 滤波
+```c++
+// 均值滤波 简单的平均卷积操作
+cv::blur(img, blur, Size(3, 3));
+
+// 方框滤波 可以选择归一化，容易越界
+cv::boxFilter(img, box, -1, Size(3, 3), normalize = true)
+// 未归一化的情况：简单地将窗口内所有像素的值加起来，然后除以窗口大小（即 k*k）。
+// 归一化的情况：除了计算平均值，还会对结果进行缩放，使得图像的亮度保持一致。
+
+// 高斯滤波 离得越近，权重越大 高斯模糊的卷积核里的数值满足高斯分布
+cv::GaussianBlur(img, aussian, Size(5, 5), 1)
+// sigmaX: X 方向上的标准差，控制高斯分布的宽度，决定了图像的模糊程度。
+// sigmaY: Y 方向上的标准差，默认值为 0。如果设置为 0，它会与 sigmaX 相同。如果你需要不同的模糊程度，可以设置不同的 sigmaX 和 sigmaY。
+// borderType: 边界处理方式，指定图像边缘如何处理。常用的有 cv::BORDER_REFLECT，cv::BORDER_CONSTANT，cv::BORDER_REPLICATE 等。
+
+// 中值滤波 相当于用中值代替 去噪音点效果最佳
+cv::medianBlur(img, median, 5)
+```
