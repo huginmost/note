@@ -128,7 +128,7 @@ cv::morphologyEx(img, gradient, open, MORPH_BLACKHAT, kernel);
 ### schaar && lapkacian 算子
 ![10](screenshot/10.png)
 
-
+## OpenCV 常用模块解读
 ### threshold
 ```c++
 	// 图片灰度二值化
@@ -173,3 +173,20 @@ cv::GaussianBlur(img, aussian, Size(5, 5), 1)
 // 中值滤波 相当于用中值代替 去噪音点效果最佳
 cv::medianBlur(img, median, 5)
 ```
+
+### Canny
+- Canny 原理 `1)-4)`
+  ![canny](screenshot/canny.png)
+  ![canny-2](screenshot/canny-2.png)
+- 方向运算用到了Sobel
+  ![canny-3](screenshot/canny-3.png)
+- 非极大值抑制
+  ![canny-4](screenshot/canny-4.png)
+  `c` 若比 `dtmp1` 和 `dtmp2` 都大，则保留
+  ![canny-5](screenshot/canny-5.png)
+  `A` 若比 `C` 和 `B` 都大，则保留
+- 双阈值检测
+  ![canny-6](screenshot/canny-6.png)
+- Canny 最终效果:
+  ![canny-7](screenshot/canny-7.png)
+  注：Canny 后两个参数对应的则是`阈值`的`max`与`min`
