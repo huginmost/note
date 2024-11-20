@@ -218,3 +218,15 @@ cv::medianBlur(img, median, 5)
 ![20-1](screenshot/20-1.png)
 ![20-2](screenshot/20-2.png)
 ![20-3](screenshot/20-3.png)
+
+### 模糊匹配
+![21](screenshot/21.png)
+
+
+## 相机：
+### 曝光时间
+![bg-1](screenshot/bg-1.png)
+### 伽马值
+![gm](screenshot/gm.png)
+### 视场角
+![scj](screenshot/scj.png)
