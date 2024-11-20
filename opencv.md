@@ -64,6 +64,17 @@ imshow("crop", crop);
     cv::Mat hstack;
     cv::hconcat(dilated, eroded, hstack);  // 水平拼接
     ```
+### 图像缩小与放大
+```c++
+cv::pyrUp(img, dst_up); //放大
+cv::pyrDown(img, dst_down); //缩小
+// 放大与缩小不可逆，对图像会造成一定的质量损失
+
+lap = img - pyrDown(dst_up);
+```
+![15](screenshot/15.png)
+
+
 
 ### 图像绘制
 ```c++
@@ -190,3 +201,20 @@ cv::medianBlur(img, median, 5)
 - Canny 最终效果:
   ![canny-7](screenshot/canny-7.png)
   注：Canny 后两个参数对应的则是`阈值`的`max`与`min`
+
+### 轮廓检测 与 特征 与 近似
+![14](screenshot/14.png)
+![16](screenshot/16.png)
+- 轮廓索引为 `-1` 时绘制为全部轮廓
+
+**特征与近似**
+![17](screenshot/17.png)
+![18](screenshot/18.png)
+![19-3](screenshot/19-3.png)
+![19-1](screenshot/19-1.png)
+![19-2](screenshot/19-2.png)
+
+**边界矩形**
+![20-1](screenshot/20-1.png)
+![20-2](screenshot/20-2.png)
+![20-3](screenshot/20-3.png)
