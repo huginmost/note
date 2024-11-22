@@ -9,38 +9,38 @@
 
 
 ## 文件结构和基本语法
-
-1. 指定 CMake 的最低版本要求：
+### Lists:
+#### 1、`cmake_minimum_required` 指定 CMake 的最低版本要求：
 ```Cmake
 cmake_minimum_required(VERSION <version>)
 ```
-2. 定义项目的名称和使用的编程语言：
+#### 2、`project` 定义项目的名称和使用的编程语言：
 ```Cmake
 project(<project_name> [<language>...])
 ```
-3. 指定要生成的可执行文件和其源文件：
+#### 3、`add_executable` 指定要生成的可执行文件和其源文件：
 ```Cmake
 add_executable(<target> <source_files>...)
 ```
-4. 创建一个库（静态库或动态库）及其源文件：
+#### 4、`add_library` 创建一个库（静态库或动态库）及其源文件：
 ```Cmake
 add_library(<target> <source_files>...)
 ```
-5. 链接目标文件与其他库：
+#### 5、`target_link_libraries` 链接目标文件与其他库：
 ```Cmake
 target_link_libraries(<target> <libraries>...)
 ```
-6. 添加头文件搜索路径：
+#### 6、`include_directories` 添加头文件搜索路径：
 ```Cmake
 include_directories(<dirs>...)
 ```
-7. 设置变量的值：
+#### 7、`set` 设置变量的值：
 ```Cmake
 set(<variable> <value>...)
 # 例如
 set(CMAKE_CXX_STANDARD 11)
 ```
-8. 设置目标属性：
+#### 8、`target_include_directories` 设置目标属性：
 ```Cmake
 target_include_directories(TARGET target_name
                           [BEFORE | AFTER]
@@ -49,7 +49,7 @@ target_include_directories(TARGET target_name
 # 例如：
 target_include_directories(MyExecutable PRIVATE ${PROJECT_SOURCE_DIR}/include)
 ```
-9、安装规则：
+#### 9、`install` 安装规则：
 ```Cmake
 install(TARGETS target1 [target2 ...]
         [RUNTIME DESTINATION dir]
@@ -61,7 +61,7 @@ install(TARGETS target1 [target2 ...]
 # 例如：
 install(TARGETS MyExecutable RUNTIME DESTINATION bin)
 ```
-10、条件语句 (if, elseif, else, endif 命令)
+####  10、 `if, elseif, else, endif` 条件语句 命令
 ```Cmake
 if(expression)
   # Commands
@@ -75,7 +75,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   message("Debug build")
 endif()
 ```
-11、自定义命令 (add_custom_command 命令)：
+#### 11、`add_custom_command` 自定义命令：
 ```Cmake
 add_custom_command(
    TARGET target
@@ -93,6 +93,47 @@ add_custom_command(
 )
 ```
 
+#### 12、file 和 foreach 遍历文件
+```Cmake
+cmake_minimum_required(VERSION 3.10)
+project(MultipleExecutables)
+
+# 设置源代码目录
+set(SOURCE_DIR src)
+
+# 查找所有的 .cpp 文件
+file(GLOB SOURCES ${SOURCE_DIR}/*.cpp)
+
+# # file(GLOB ...) 遍历所有的源文件，生成对应的可执行文件
+foreach(SOURCE_FILE ${SOURCES})
+    # 获取源文件的基本名称（去除路径和扩展名）
+    get_filename_component(EXEC_NAME ${SOURCE_FILE} NAME_WE)
+
+    # 为每个源文件创建一个对应的可执行文件
+    add_executable(${EXEC_NAME} ${SOURCE_FILE})
+endforeach()
+```
+
+#### get_filename_component 从文件路径中提取不同的组件
+```Cmake
+get_filename_component(<output_variable> <input_path> <component>)
+# <output_variable>：存储提取结果的变量。
+# <input_path>：输入的文件路径。
+# <component>：要提取的组件类型。
+
+get_filename_component(EXEC_NAME ${FILE_NAME} NAME_WE)
+```
+get_filename_component `component` 选项
+- `NAME_WE`：获取文件的前缀名。
+  - /path/to/file/a_example.cpp -> a_example
+- `NAME`：获取文件的基本名称（含扩展名）。  
+  - /path/to/file/a_example.cpp -> a_example.cpp
+- `EXT`：获取文件的扩展名。
+  - /path/to/file/a_example.cpp -> .cpp
+- `DIR`：获取文件的目录路径（不含文件名）。
+  - /path/to/file/a_example.cpp -> /path/to/file
+- `ABSOLUTE`：获取文件的绝对路径。
+  - /path/to/file/a_example.cpp -> /path/to/file/a_example.cpp
 
 ---
 ## 变量
