@@ -80,3 +80,5 @@ xz：压缩率最佳，但速度较慢，特别是在压缩时。
 ## 一个好用的截图工具
   `sudo apt-get install flameshot`
   使用介绍：[ubuntu linux神级一键截图软件flameshot](https://www.bilibili.com/video/BV1K7411c7GW)
+
+## df -h 查看磁盘分区信息

@@ -1,4 +1,6 @@
 [TOC]
+[基本操作->_opencv_function.md](./cpp%20learn/_opencv_function.md)
+
 ## 基本操作
 ### 读取 && 复制 && 写入
 ```c++
@@ -141,6 +143,9 @@ cv::morphologyEx(img, gradient, open, MORPH_BLACKHAT, kernel);
 
 ## OpenCV 常用模块解读
 ### threshold
+- 阈值T比较的是像素值
+  ![pixel](screenshot/pixel.png)
+- 因此，二值化一般对灰度图处理
 ```c++
 	// 图片灰度二值化
 	void threshold() {
@@ -174,6 +179,11 @@ cv::blur(img, blur, Size(3, 3));
 cv::boxFilter(img, box, -1, Size(3, 3), normalize = true)
 // 未归一化的情况：简单地将窗口内所有像素的值加起来，然后除以窗口大小（即 k*k）。
 // 归一化的情况：除了计算平均值，还会对结果进行缩放，使得图像的亮度保持一致。
+// 归一化方框滤波：
+// 图像平滑。
+// 去噪。
+// 局部平均操作。
+
 
 // 高斯滤波 离得越近，权重越大 高斯模糊的卷积核里的数值满足高斯分布
 cv::GaussianBlur(img, aussian, Size(5, 5), 1)
@@ -202,19 +212,19 @@ cv::medianBlur(img, median, 5)
   ![canny-7](screenshot/canny-7.png)
   注：Canny 后两个参数对应的则是`阈值`的`max`与`min`
 
-### 轮廓检测 与 特征 与 近似
+### 轮廓检测 findContours 与 特征 与 近似
 ![14](screenshot/14.png)
 ![16](screenshot/16.png)
 - 轮廓索引为 `-1` 时绘制为全部轮廓
 
-**特征与近似**
+**特征与近似** `contourArea`
 ![17](screenshot/17.png)
 ![18](screenshot/18.png)
 ![19-3](screenshot/19-3.png)
 ![19-1](screenshot/19-1.png)
 ![19-2](screenshot/19-2.png)
 
-**边界矩形**
+**边界矩形** `boundingRect`
 ![20-1](screenshot/20-1.png)
 ![20-2](screenshot/20-2.png)
 ![20-3](screenshot/20-3.png)
@@ -230,3 +240,67 @@ cv::medianBlur(img, median, 5)
 ![gm](screenshot/gm.png)
 ### 视场角
 ![scj](screenshot/scj.png)
+`
+## 获取视频信息 `cv::VideoCapture::get`
+    ```cpp
+    virtual double cv::VideoCapture::get(int propId) const;
+    参数
+    propId：这是一个整数值，表示要查询的具体属性。OpenCV 定义了一些常见的属性 ID，使用 cv::CAP_PROP_* 常量。常见的属性 ID 包括：
+    cv::CAP_PROP_FRAME_WIDTH：视频流的帧宽度。
+    cv::CAP_PROP_FRAME_HEIGHT：视频流的帧高度。
+    cv::CAP_PROP_FPS：视频的帧率（每秒帧数）。
+    cv::CAP_PROP_FOURCC：视频的编码方式（四字符编码）。
+    cv::CAP_PROP_POS_FRAMES：视频当前的位置（按帧计数）。
+    cv::CAP_PROP_POS_MSEC：视频当前的位置（按毫秒计数）。
+    cv::CAP_PROP_BRIGHTNESS：视频捕获的亮度。
+    cv::CAP_PROP_CONTRAST：视频捕获的对比度。
+    cv::CAP_PROP_SATURATION：视频捕获的饱和度。
+    cv::CAP_PROP_HUE：视频捕获的色调。
+    cv::CAP_PROP_GAIN：视频捕获的增益。
+    返回值
+    该函数返回一个 double 类型的值，表示请求的属性值。如果请求的属性不支持或发生错误，通常返回 NaN（非数字）。
+    ```
+
+## 旋转矩形 RotatedRect
+
+1. **`RotatedRect`** 可以通过多种方式构造：
+
+- 通过中心点、尺寸和角度：
+  ```cpp
+  RotatedRect(const Point2f& center, const  Size2f& size, float angle)
+  // center：矩形的中心点，类型为 cv::Point2f。
+  // size：矩形的尺寸，宽和高，类型为 cv::Size2f。
+  // angle：矩形逆时针旋转的角度（以度为单位）。
+  ```
+- 通过三个顶点创建：
+  ```cpp
+  RotatedRect(const Point2f& pt1, const Point2f&  pt2, const Point2f& pt3)
+  // 通过定义矩形的三个顶点推导其中心点、尺寸和角度。
+  ```
+2. 成员
+  - **`angel`**
+    类型：float
+    说明：矩形旋转角度，单位为 `度`，以矩形的长边为参考。
+    - 旋转是 逆时针方向，角度范围通常为 `[-90, 0)`。
+  - **`center`**
+    类型：cv::Point2f
+    说明：矩形的中心点坐标。
+  - **`size`**
+    类型：cv::Size2f
+    说明：矩形的宽度`size.width`和高度`size.height`。
+3. 方法
+  - `cv::RotatedRect::points(Point2f pts[4])`
+    功能：获取旋转矩形的四个顶点。
+    pts：一个大小为 4 的数组，存储矩形的四个顶点。
+    ```cpp
+    RotatedRect rect(center, size, angle);
+    Point2f vertices[4];
+    rect.points(vertices);
+    for (int i = 0; i < 4; i++) {
+        line(image, vertices[i], vertices[(i+1) %4],   Scalar(0,255,0));
+    }
+    ```
+  - `cv::RotatedRect::boundingRect()`
+    功能：获取旋转矩形的最小外接矩形（普通矩形）。
+    注：普通矩形的面积大于等于旋转矩形
+    `cv::RotatedRect::boundingRect2f()` 返回浮点型坐标
