@@ -23,13 +23,21 @@ struct Student
     int id;
     int age;
 }stu;
-
+// Student 结构体类型
+// stu 结构体变量
 
 struct Struct
 {
     int a;
     int b;
 };
+
+typedef struct Struct2 
+{
+    int c;
+    int d;
+}stu2;
+// typedef struct Struct2 stu2
 
 typedef struct Struct _str;
 int main(int argc, char const *argv[])
